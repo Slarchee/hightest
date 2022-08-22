@@ -24,7 +24,7 @@ public class VerifReussite {
         String yopMailDebAdresse = "charles.douradou";
         String verificationReussite = "répondu à 20 question(s) sur 20, soit 100&nbsp;%";
         String resultatBonneReponse = "OK : Le mail recu indique bien 100 % de bonnes reponses";
-        String resultatMauvaiseReponse = "KO : Le mail recu indique une valeur inferieure à 100 % de bonnes reponses";
+        String resultatMauvaiseReponse = "KO : Le mail recu indique une valeur inferieure a 100 % de bonnes reponses";
 
         //Reponses aux questions dans l'ordre
         int[] myArray = new int[]{1,2,1,2,2,3,2,4,1,3,4,2,3,2,4,3,3,1,2,2};
@@ -74,6 +74,9 @@ public class VerifReussite {
         
         //Appuyer sur Entrer pour valider l'adresse mail
         driver.findElement(By.id("login")).sendKeys(Keys.ENTER);
+        
+        //Attendre la réception du mail
+        Thread.sleep(5000);
         
         //Appuyer sur le bouton refresh pour afficher le dernier mail reçu
         driver.findElement(By.id("refresh")).click();
