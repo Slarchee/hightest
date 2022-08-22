@@ -1,14 +1,22 @@
 package newpackage;
 
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import io.netty.handler.timeout.TimeoutException;
+
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+
 
 public class VerifReussite {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
     	//Déclaration et instantiation des objets et variables
 		System.setProperty("webdriver.chrome.driver","C:\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
@@ -18,21 +26,23 @@ public class VerifReussite {
 		//Déclaration des variables 
 		String baseUrl = "https://hightest.nc/";
         String yopMail = "https://yopmail.com/fr/";
-        String resultatBonneReponse = "Le mail reçu indique bien 100 % de bonne réponses";
-        String resultatMauvaiseReponse = "Le mail reçu indique une valeur inférieur à 100 % de bonne réponses";
-        String verificationReussite = "répondu à 20 question(s) sur 20, soit 100&nbsp;%";
         String yopMailAdresse = "charles.douradou@yopmail.com";
         String yopMailDebAdresse = "charles.douradou";
-        //Reponses aux questions dans l'ordre dans un tableau
+        String verificationReussite = "répondu à 20 question(s) sur 20, soit 100&nbsp;%";
+        String resultatBonneReponse = "OK : Le mail reçu indique bien 100 % de bonne réponses";
+        String resultatMauvaiseReponse = "KO : Le mail reçu indique une valeur inférieur à 100 % de bonne réponses";
+
+        //Reponses aux questions dans l'ordre
         int[] myArray = new int[]{1,2,1,2,2,3,2,4,1,3,4,2,3,2,4,3,3,1,2,2};
-        
-        //Script
+
+        //Exécution du test
         //Ouvrir la page d'accueil de hightest
+        try {
         driver.get(baseUrl);
         
         //Cliquer sur le menu ToolBox
         executor.executeScript("arguments[0].click();", driver.findElement(By.xpath("//*[contains(@href,'https://hightest.nc/toolbox/')]")));
-        
+
         //Cliquer sur le test "Quiz ISTQB niveau Foundation" en français
         executor.executeScript("arguments[0].click();", driver.findElement(By.xpath("//*[contains(@href,'https://hightest.nc/ressources/test-istqb.php')]")));
         
@@ -44,7 +54,6 @@ public class VerifReussite {
         
         //Réponses aux questions
         for (int i=0; i<myArray.length; i++) {
-            System.out.println(myArray[i]);
             executor.executeScript("arguments[0].click();", driver.findElement(By.xpath("//input[@name='"+i+"' and @value='"+myArray[i]+"']")));
         }
         
@@ -81,6 +90,12 @@ public class VerifReussite {
         else
         	System.out.println(resultatMauvaiseReponse);
 
+        } catch (WebDriverException e) {
+        	System.out.println("WebDriverException");
+        } catch (NoSuchElementException  e) {
+        	System.out.println("Un élément n'a pas était trouvé");
+		}
+        
         //Fermer les fenêtres Chrome
         driver.quit();
     }
