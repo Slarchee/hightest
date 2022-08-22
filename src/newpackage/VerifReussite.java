@@ -1,27 +1,21 @@
 package newpackage;
 
-import java.io.IOException;
-import java.util.NoSuchElementException;
-import io.netty.handler.timeout.TimeoutException;
-
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
-
-
 
 public class VerifReussite {
 	
-	public static void main(String[] args) throws IOException {
-    	//Déclaration et instantiation des objets et variables
+	public static void main(String[] args) throws InterruptedException {
+    	//Déclaration et instanciation des objets et variables
 		System.setProperty("webdriver.chrome.driver","C:\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
 		JavascriptExecutor executor = (JavascriptExecutor)driver;
-		driver.manage().window().maximize();
+		//driver.manage().window().maximize();
         
 		//Déclaration des variables 
 		String baseUrl = "https://hightest.nc/";
@@ -29,8 +23,8 @@ public class VerifReussite {
         String yopMailAdresse = "charles.douradou@yopmail.com";
         String yopMailDebAdresse = "charles.douradou";
         String verificationReussite = "répondu à 20 question(s) sur 20, soit 100&nbsp;%";
-        String resultatBonneReponse = "OK : Le mail reçu indique bien 100 % de bonne réponses";
-        String resultatMauvaiseReponse = "KO : Le mail reçu indique une valeur inférieur à 100 % de bonne réponses";
+        String resultatBonneReponse = "OK : Le mail recu indique bien 100 % de bonnes reponses";
+        String resultatMauvaiseReponse = "KO : Le mail recu indique une valeur inferieure à 100 % de bonnes reponses";
 
         //Reponses aux questions dans l'ordre
         int[] myArray = new int[]{1,2,1,2,2,3,2,4,1,3,4,2,3,2,4,3,3,1,2,2};
@@ -46,10 +40,13 @@ public class VerifReussite {
         //Cliquer sur le test "Quiz ISTQB niveau Foundation" en français
         executor.executeScript("arguments[0].click();", driver.findElement(By.xpath("//*[contains(@href,'https://hightest.nc/ressources/test-istqb.php')]")));
         
-        //Ce positionner sur la nouvelle tab
+        //Se positionner sur la nouvelle tab
         for(String qcmPage : driver.getWindowHandles()){
-            driver.switchTo().window(qcmPage);
-            driver.manage().window().maximize();
+        	try {
+        		driver.switchTo().window(qcmPage);
+            } catch (NoSuchWindowException e) {
+            	System.out.println("La fenetre n'existe pas");	
+            }
         }
         
         //Réponses aux questions
@@ -60,7 +57,7 @@ public class VerifReussite {
         //Valider le formulaire en cliquant sur le bouton "Terminé !"
         executor.executeScript("arguments[0].click();", driver.findElement(By.id("submit")));
 
-        //Renseigner l'addresse mail dans le champ "Votre adresse e-mail"
+        //Renseigner l'adresse mail dans le champ "Votre adresse e-mail"
         driver.findElement(By.id("email")).sendKeys(yopMailAdresse);
         
         //Valider le formulaire en cliquant sur le bouton "OK" 
@@ -72,16 +69,16 @@ public class VerifReussite {
         //Accepter les cookies
         driver.findElement(By.id("accept")).click();
         
-        //Renseigner l'addresse mail dans le champ "Saisissez le mail jetable de votre choix"
+        //Renseigner l'adresse mail dans le champ "Saisissez le mail jetable de votre choix"
         driver.findElement(By.id("login")).sendKeys(yopMailDebAdresse);
         
         //Appuyer sur Entrer pour valider l'adresse mail
         driver.findElement(By.id("login")).sendKeys(Keys.ENTER);
         
-        //Appuyer sur le bouton refresh pour affichier le dernier mail reçu
+        //Appuyer sur le bouton refresh pour afficher le dernier mail reçu
         driver.findElement(By.id("refresh")).click();
         
-        //Permet de ce concentrer sur la frame ifmail contenant les informations à vérifier
+        //Permets de se concentrer sur la frame ifmail contenant les informations à vérifier
         driver.switchTo().frame(driver.findElement(By.name("ifmail")));
         
         //Condition qui permet de confirmer si le mail retourne 100% de réussite ou non
@@ -90,13 +87,11 @@ public class VerifReussite {
         else
         	System.out.println(resultatMauvaiseReponse);
 
-        } catch (WebDriverException e) {
-        	System.out.println("WebDriverException");
-        } catch (NoSuchElementException  e) {
-        	System.out.println("Un élément n'a pas était trouvé");
-		}
+        }catch(NoSuchElementException  e) {
+        	System.out.println("Un element n'a pas etait trouve");
+        }
         
-        //Fermer les fenêtres Chrome
+        //Fermer les fenêtres Chrome 
         driver.quit();
     }
 }
