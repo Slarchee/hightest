@@ -45,7 +45,8 @@ public class VerifReussite {
         	try {
         		driver.switchTo().window(qcmPage);
             } catch (NoSuchWindowException e) {
-            	System.out.println("La fenetre n'existe pas");	
+            	System.out.println("La fenetre n'existe pas");
+            	driver.quit();
             }
         }
         
